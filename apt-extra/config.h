@@ -32,9 +32,9 @@
 #define PACKAGE_MAIL "saurik@saurik.com"
 
 #define CMAKE_INSTALL_FULL_BINDIR "/var/jb/usr/bin"
-#define STATE_DIR "/var/lib/apt"
-#define CACHE_DIR "/var/cache/apt"
-#define LOG_DIR "/var/log/apt"
+#define STATE_DIR "/var/jb/var/lib/apt"
+#define CACHE_DIR "/var/jb/var/cache/apt"
+#define LOG_DIR "/var/jb/var/log/apt"
 #define CONF_DIR "/var/jb/etc/apt"
 #define LIBEXEC_DIR "/var/jb/usr/lib/apt"
 #define BIN_DIR "/var/jb/usr/bin"

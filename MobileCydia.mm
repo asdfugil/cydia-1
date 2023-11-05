@@ -2539,14 +2539,14 @@ struct PackageNameOrdering :
         _profile(Package$initWithVersion$Metadata)
             const char *mixed(iterator.Name());
             size_t size(strlen(mixed));
-            static const size_t prefix(sizeof("/var/lib/dpkg/info/") - 1);
+            static const size_t prefix(sizeof("/var/jb/var/lib/dpkg/info/") - 1);
             char lower[prefix + size + 5 + 1];
 
             for (size_t i(0); i != size; ++i)
                 lower[prefix + i] = mixed[i] | 0x20;
 
             if (!installed_.empty()) {
-                memcpy(lower, "/var/lib/dpkg/info/", prefix);
+                memcpy(lower, "/var/jb/var/lib/dpkg/info/", prefix);
                 memcpy(lower + prefix + size, ".list", 6);
                 struct stat info;
                 if (stat(lower, &info) != -1)
@@ -2961,7 +2961,7 @@ struct PackageNameOrdering :
 }
 
 - (NSArray *) files {
-    NSString *path = [NSString stringWithFormat:@"/var/lib/dpkg/info/%@.list", static_cast<NSString *>(id_)];
+    NSString *path = [NSString stringWithFormat:@"/var/jb/var/lib/dpkg/info/%@.list", static_cast<NSString *>(id_)];
     NSMutableArray *files = [NSMutableArray arrayWithCapacity:128];
 
     std::ifstream fin;
@@ -3777,8 +3777,8 @@ class CydiaLogCleaner :
                 repair = @selector(configure);
             //else if (error == "The package lists or status file could not be parsed or opened.")
             //    repair = @selector(update);
-            // else if (error == "Could not get lock /var/lib/dpkg/lock - open (35 Resource temporarily unavailable)")
-            // else if (error == "Could not open lock file /var/lib/dpkg/lock - open (13 Permission denied)")
+            // else if (error == "Could not get lock /var/jb/var/lib/dpkg/lock - open (35 Resource temporarily unavailable)")
+            // else if (error == "Could not open lock file /var/jb/var/lib/dpkg/lock - open (13 Permission denied)")
             // else if (error == "Malformed Status line")
             // else if (error == "The list of sources could not be read.")
 
@@ -4074,7 +4074,7 @@ class CydiaLogCleaner :
 
     pkgPackageManager::OrderResult result(manager_->DoInstall(statusfd_));
 
-    NSString *oextended(@"/var/lib/apt/extended_states");
+    NSString *oextended(@"/var/jb/var/lib/apt/extended_states");
     NSString *nextended(Cache("extended_states"));
 
     struct stat info;
@@ -8617,11 +8617,11 @@ _end
                     [broken remove];
                     NSString *id(ShellEscape([broken id]));
                     system([[NSString stringWithFormat:@"/var/jb/usr/libexec/cydia/cydo /var/jb/bin/rm -f"
-                        " /var/lib/dpkg/info/%@.prerm"
-                        " /var/lib/dpkg/info/%@.postrm"
-                        " /var/lib/dpkg/info/%@.preinst"
-                        " /var/lib/dpkg/info/%@.postinst"
-                        " /var/lib/dpkg/info/%@.extrainst_"
+                        " /var/jb/var/lib/dpkg/info/%@.prerm"
+                        " /var/jb/var/lib/dpkg/info/%@.postrm"
+                        " /var/jb/var/lib/dpkg/info/%@.preinst"
+                        " /var/jb/var/lib/dpkg/info/%@.postinst"
+                        " /var/jb/var/lib/dpkg/info/%@.extrainst_"
                     "", id, id, id, id, id] UTF8String]);
                 }
 
@@ -9177,7 +9177,10 @@ int main_store(int, char *argv[]);
 
 int main_http();
 
+void DoNothingHandler(int __unused _) {};
+
 int main(int argc, char *argv[]) {
+    signal(SIGPIPE, DoNothingHandler);
     const char *argv0(argv[0]);
     if (const char *slash = strrchr(argv0, '/'))
         argv0 = slash + 1;
@@ -9474,7 +9477,7 @@ int main(int argc, char *argv[]) {
     mkdir([Cache("archives/partial") UTF8String], 0755);
     _config->Set("Dir::Cache", [Cache_ UTF8String]);
 
-    symlink("/var/lib/apt/extended_states", [Cache("extended_states") UTF8String]);
+    symlink("/var/jb/var/lib/apt/extended_states", [Cache("extended_states") UTF8String]);
     _config->Set("Dir::State", [Cache_ UTF8String]);
 
     mkdir([Cache("lists") UTF8String], 0755);

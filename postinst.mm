@@ -78,10 +78,10 @@ int main(int argc, const char *argv[]) {
     #define NewCache_ "/var/jb/var/mobile/Library/Caches/com.saurik.Cydia"
     system("cd /; su mobile -c 'mkdir -p " NewCache_ "'");
     if (access(NewCache_ "/lists", F_OK) != 0 && errno == ENOENT)
-        system("cp -at " NewCache_ " /var/lib/apt/lists");
+        system("cp -at " NewCache_ " /var/jb/var/lib/apt/lists");
     system("chown -R 501.501 " NewCache_);
 
-    #define OldLibrary_ "/var/lib/cydia"
+    #define OldLibrary_ "/var/jb/var/lib/cydia"
 
     #define NewLibrary_ "/var/jb/var/mobile/Library/Cydia"
     system("cd /; su mobile -c 'mkdir -p " NewLibrary_ "'");

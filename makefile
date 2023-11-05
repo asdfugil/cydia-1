@@ -46,7 +46,7 @@ cycc += -fmessage-length=0
 cycc += -g -Og
 cycc += -fvisibility=hidden
 
-link += -Wl,-dead_strip sysroot/usr/lib/libiosexec.1.tbd
+link += sysroot/usr/lib/libiosexec.1.tbd #-Wl,-dead_strip
 link += -Wl,-no_dead_strip_inits_and_terms /Users/nick/.local/theos/sdks/iPhoneOS14.5.sdk/usr/lib/libMobileGestalt.tbd
 
 iapt := 
@@ -339,8 +339,8 @@ debs/cydia_$(version)_iphoneos-arm64.deb: MobileCydia preinst postinst cydo $(im
 
 	fakeroot gchown -R 0 _
 	fakeroot gchgrp -R 0 _
-	#fakeroot gchmod 6755 _/var/jb/usr/libexec/cydia/cydo
-	fakeroot gchmod 0755 _/var/jb/usr/libexec/cydia/cydo
+	fakeroot gchmod 6755 _/var/jb/usr/libexec/cydia/cydo
+	#fakeroot gchmod 0755 _/var/jb/usr/libexec/cydia/cydo
 
 	mkdir -p debs
 	ln -sf debs/cydia_$(version)_iphoneos-arm64.deb Cydia.deb
