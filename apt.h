@@ -2,7 +2,7 @@
 #define APT_H
 
 #include <unistd.h>
-#define DPKG_DATADIR "/usr/share/dpkg"
+#define DPKG_DATADIR "/var/jb/usr/share/dpkg"
 
 template <typename Type_>
 static Type_ *strchrnul(Type_ *s, int c) {

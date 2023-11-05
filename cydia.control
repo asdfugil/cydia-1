@@ -2,10 +2,10 @@ Package: cydia
 Priority: important
 Section: Packaging
 Maintainer: Procursus Team <support@procurs.us>
-Architecture: iphoneos-arm
+Architecture: iphoneos-arm64
 Version: 
 Replaces: bigboss, bigbossbetarepo, com.sosiphone.addcydia, cydia-sources, cydia-lproj, ispazio.net, modmyifone, saurik, ste, yellowsn0w.com, zodttd
-Depends: bzip2, darwintools, debianutils, dpkg (>= 1.19.1), gzip, sed, shell-cmds, system-cmds, uikittools (>= 1.1.14), xz-utils, zstd
+Depends: bzip2, darwintools, debianutils, dpkg (>= 1.19.1), gzip, sed, shell-cmds, system-cmds, uikittools (>= 1.1.14), xz-utils, zstd, libiosexec1 (>= 1.3.1)
 Conflicts: bigboss, bigbossbetarepo, com.sosiphone.addcydia, cydia-sources, cydia-lproj, ispazio.net, modmyifone, ste, yellowsn0w.com, zodttd
 Pre-Depends: debianutils, dpkg (>= 1.16.1), firmware (>=12.0)
 Provides: bigbossbetarepo, cydia-sources, cydia-lproj

@@ -14,7 +14,7 @@
 #define FLAG_PLATFORMIZE (1 << 1)
 
 void platformize_me() {
-	void* handle = dlopen("/usr/lib/libjailbreak.dylib", RTLD_LAZY);
+	void* handle = dlopen("/var/jb/usr/lib/libjailbreak.dylib", RTLD_LAZY);
 	if (!handle) return;
 
 	// Reset errors
@@ -75,7 +75,7 @@ int main(int argc, const char *argv[]) {
     if (access(OldCache_, F_OK) == 0)
         system("rm -rf " OldCache_);
 
-    #define NewCache_ "/var/mobile/Library/Caches/com.saurik.Cydia"
+    #define NewCache_ "/var/jb/var/mobile/Library/Caches/com.saurik.Cydia"
     system("cd /; su mobile -c 'mkdir -p " NewCache_ "'");
     if (access(NewCache_ "/lists", F_OK) != 0 && errno == ENOENT)
         system("cp -at " NewCache_ " /var/lib/apt/lists");
@@ -83,12 +83,13 @@ int main(int argc, const char *argv[]) {
 
     #define OldLibrary_ "/var/lib/cydia"
 
-    #define NewLibrary_ "/var/mobile/Library/Cydia"
+    #define NewLibrary_ "/var/jb/var/mobile/Library/Cydia"
     system("cd /; su mobile -c 'mkdir -p " NewLibrary_ "'");
+    system("cd /; su mobile -c 'mkdir -p /var/jb/var/mobile/Library/Logs/Cydia'");
 
     #define Cytore_ "/metadata.cb0"
 
-    #define CYDIA_LIST "/etc/apt/sources.list.d/cydia.list"
+    #define CYDIA_LIST "/var/jb/etc/apt/sources.list.d/cydia.list"
     unlink(CYDIA_LIST);
     [[NSString stringWithFormat:@
         "deb http://apt.thebigboss.org/repofiles/cydia/ stable main\n"

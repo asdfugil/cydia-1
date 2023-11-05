@@ -26,18 +26,18 @@
 
 #undef HAVE_PTSNAME_R
 
-#define COMMON_ARCH "iphoneos-arm"
+#define COMMON_ARCH "iphoneos-arm64"
 #define PACKAGE "cydia" // XXX
 #define PACKAGE_VERSION "${PACKAGE_VERSION}" // XXX
 #define PACKAGE_MAIL "saurik@saurik.com"
 
-#define CMAKE_INSTALL_FULL_BINDIR "/usr/bin"
+#define CMAKE_INSTALL_FULL_BINDIR "/var/jb/usr/bin"
 #define STATE_DIR "/var/lib/apt"
 #define CACHE_DIR "/var/cache/apt"
 #define LOG_DIR "/var/log/apt"
-#define CONF_DIR "/etc/apt"
-#define LIBEXEC_DIR "/usr/lib/apt"
-#define BIN_DIR "/usr/bin"
+#define CONF_DIR "/var/jb/etc/apt"
+#define LIBEXEC_DIR "/var/jb/usr/lib/apt"
+#define BIN_DIR "/var/jb/usr/bin"
 
 #define ROOT_GROUP "wheel"
 

@@ -96,16 +96,16 @@ void CyteInitialize(NSString *agent) {
         safari = [info objectForKey:@"CFBundleVersion"];
     }
 
-    agent = [NSString stringWithFormat:@"%@ CyF/%.2f", agent, kCFCoreFoundationVersionNumber];
+    agent = @"Procursus APT-HTTP/1.3";/*[NSString stringWithFormat:@"%@ CyF/%.2f", agent, kCFCoreFoundationVersionNumber];*/
 
-    if (safari != nil)
+   /* if (safari != nil)
         if (RegEx match = RegEx("([0-9]+(\\.[0-9]+)+).*", safari))
             agent = [NSString stringWithFormat:@"Safari/%@ %@", match[1], agent];
     if (RegEx match = RegEx("([0-9]+[A-Z][0-9]+[a-z]?).*", System_))
         agent = [NSString stringWithFormat:@"Mobile/%@ %@", match[1], agent];
     if (product != nil)
         if (RegEx match = RegEx("([0-9]+(\\.[0-9]+)+).*", product))
-            agent = [NSString stringWithFormat:@"Version/%@ %@", match[1], agent];
+            agent = [NSString stringWithFormat:@"Version/%@ %@", match[1], agent];*/
 
     [CyteWebViewController setApplicationNameForUserAgent:agent];
 }

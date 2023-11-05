@@ -239,9 +239,10 @@ static void (*$SBSSetInterceptsMenuButtonForever)(bool);
 static NSData *(*$SBSCopyIconImagePNGDataForDisplayIdentifier)(NSString *);
 
 static CFStringRef (*$MGCopyAnswer)(CFStringRef);
+extern "C" CFTypeRef MGCopyAnswer(CFStringRef);
 
 static NSString *UniqueIdentifier(UIDevice *device = nil) {
-    return [(id)$MGCopyAnswer(CFSTR("UniqueDeviceID")) autorelease];
+    return (__bridge_transfer NSString *)MGCopyAnswer(CFSTR("UniqueDeviceID"));
 }
 
 static const NSUInteger UIViewAutoresizingFlexibleBoth(UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
@@ -638,7 +639,7 @@ static bool RestartSubstrate_;
 static NSArray *Finishes_;
 
 #define SpringBoard_ "/System/Library/LaunchDaemons/com.apple.SpringBoard.plist"
-#define NotifyConfig_ "/etc/notify.conf"
+#define NotifyConfig_ "/var/jb/etc/notify.conf"
 
 static bool Queuing_;
 
@@ -1390,7 +1391,7 @@ static void PackageImport(const void *key, const void *value, void *context) {
 // }}}
 
 static NSDate *GetStatusDate() {
-    return [[[NSFileManager defaultManager] attributesOfItemAtPath:@"/var/lib/dpkg/status" error:NULL] fileModificationDate];
+    return [[[NSFileManager defaultManager] attributesOfItemAtPath:@"/var/jb/var/lib/dpkg/status" error:NULL] fileModificationDate];
 }
 
 static void SaveConfig(NSObject *lock) {
@@ -3053,7 +3054,7 @@ struct PackageNameOrdering :
 
         if (NSArray *files = [self files])
             for (NSString *file in files)
-                if (!cydia && [file isEqualToString:@"/Applications/Cydia.app"])
+                if (!cydia && [file isEqualToString:@"/var/jb/Applications/Cydia.app"])
                     cydia = true;
                 else if (!user && [file isEqualToString:@"/User"])
                     user = true;
@@ -3679,10 +3680,10 @@ class CydiaLogCleaner :
 
     bool error(false);
 
-    if (access("/etc/apt/sources.list", F_OK) == 0)
-        error |= [self popErrorWithTitle:title forOperation:list.ReadAppend("/etc/apt/sources.list")];
+    if (access("/var/jb/etc/apt/sources.list", F_OK) == 0)
+        error |= [self popErrorWithTitle:title forOperation:list.ReadAppend("/var/jb/etc/apt/sources.list")];
 
-    std::string base("/etc/apt/sources.list.d");
+    std::string base("/var/jb/etc/apt/sources.list.d");
     if (DIR *sources = opendir(base.c_str())) {
         while (dirent *source = readdir(sources))
             if (source->d_name[0] != '.' && source->d_namlen > 5 && strcmp(source->d_name + source->d_namlen - 5, ".list") == 0 && strcmp(source->d_name, "cydia.list") != 0)
@@ -3963,7 +3964,7 @@ class CydiaLogCleaner :
 } }
 
 - (void) configure {
-    NSString *dpkg = [NSString stringWithFormat:@"/usr/libexec/cydo --configure -a --status-fd %u", statusfd_];
+    NSString *dpkg = [NSString stringWithFormat:@"/var/jb/usr/libexec/cydo --configure -a --status-fd %u", statusfd_];
     _trace();
     system([dpkg UTF8String]);
     _trace();
@@ -4078,7 +4079,7 @@ class CydiaLogCleaner :
 
     struct stat info;
     if (stat([nextended UTF8String], &info) != -1 && (info.st_mode & S_IFMT) == S_IFREG)
-        system([[NSString stringWithFormat:@"/usr/libexec/cydia/cydo /bin/cp --remove-destination %@ %@", ShellEscape(nextended), ShellEscape(oextended)] UTF8String]);
+        system([[NSString stringWithFormat:@"/var/jb/usr/libexec/cydia/cydo /var/jb/bin/cp --remove-destination %@ %@", ShellEscape(nextended), ShellEscape(oextended)] UTF8String]);
 
     unlink([nextended UTF8String]);
     symlink([oextended UTF8String], [nextended UTF8String]);
@@ -4484,7 +4485,7 @@ class CydiaLogCleaner :
 - (NSNumber *) du:(NSString *)path {
     NSNumber *value(nil);
 
-    FILE *du(popen([[NSString stringWithFormat:@"/usr/libexec/cydia/cydo /usr/bin/du -ks %@", ShellEscape(path)] UTF8String], "r"));
+    FILE *du(popen([[NSString stringWithFormat:@"/var/jb/usr/libexec/cydia/cydo /var/jb/usr/bin/du -ks %@", ShellEscape(path)] UTF8String], "r"));
     if (du != NULL) {
         char line[1024];
         while (fgets(line, sizeof(line), du) != NULL) {
@@ -4587,7 +4588,7 @@ class CydiaLogCleaner :
 - (void) _setupMail:(MFMailComposeViewController *)controller {
     [controller addAttachmentData:[NSData dataWithContentsOfFile:@"/tmp/cydia.log"] mimeType:@"text/plain" fileName:@"cydia.log"];
 
-    system("/usr/bin/dpkg -l >/tmp/dpkgl.log");
+    system("/var/jb/usr/bin/dpkg -l >/var/jb/tmp/dpkgl.log");
     [controller addAttachmentData:[NSData dataWithContentsOfFile:@"/tmp/dpkgl.log"] mimeType:@"text/plain" fileName:@"dpkgl.log"];
 }
 
@@ -4607,7 +4608,7 @@ class CydiaLogCleaner :
     NSString *host([url host]);
 
     if ([href hasPrefix:@"https://cydia.saurik.com/TSS/"]) {
-        if (NSString *agent = [copy valueForHTTPHeaderField:@"X-User-Agent"]) {
+        if (NSString *agent = @"Procursus APT-HTTP/1.3") {
             [copy setValue:agent forHTTPHeaderField:@"User-Agent"];
             [copy setValue:nil forHTTPHeaderField:@"X-User-Agent"];
         }
@@ -7267,7 +7268,7 @@ static void HomeControllerReachabilityCallback(SCNetworkReachabilityRef reachabi
     const char *package([name_ UTF8String]);
     bool on([ignoredSwitch_ isOn]);
 
-    FILE *dpkg(popen("/usr/libexec/cydia/cydo --set-selections", "w"));
+    FILE *dpkg(popen("/var/jb/usr/libexec/cydia/cydo --set-selections", "w"));
     fwrite(package, strlen(package), 1, dpkg);
 
     if (on)
@@ -7925,6 +7926,8 @@ static void HomeControllerReachabilityCallback(SCNetworkReachabilityRef reachabi
             [request setValue:UniqueID_ forHTTPHeaderField:@"X-Cydia-Id"];
     }
 
+    [request setValue:@"Procursus APT-HTTP/1.3" forHTTPHeaderField:@"User-Agent"];
+
     return [[[NSURLConnection alloc] initWithRequest:request delegate:self] autorelease];
 }
 
@@ -8257,9 +8260,9 @@ static void HomeControllerReachabilityCallback(SCNetworkReachabilityRef reachabi
         }
         if (kill(sb_pid, 0)) sleep(5);
     }
-    system("/usr/libexec/cydia/cydo /bin/launchctl stop com.apple.SpringBoard");
+    system("/var/jb/usr/libexec/cydia/cydo /var/jb/bin/launchctl stop com.apple.SpringBoard");
     sleep(15);
-    system("/usr/bin/killall backboardd SpringBoard");
+    system("/var/jb/usr/bin/killall backboardd SpringBoard");
 }
 
 - (void) _saveConfig {
@@ -8547,7 +8550,7 @@ _end
 
 - (void) _uicache {
     _trace();
-    system("/usr/bin/uicache -a");
+    system("/var/jb/usr/bin/uicache -a");
     _trace();
 }
 
@@ -8613,7 +8616,7 @@ _end
                 for (Package *broken in (id) broken_) {
                     [broken remove];
                     NSString *id(ShellEscape([broken id]));
-                    system([[NSString stringWithFormat:@"/usr/libexec/cydia/cydo /bin/rm -f"
+                    system([[NSString stringWithFormat:@"/var/jb/usr/libexec/cydia/cydo /var/jb/bin/rm -f"
                         " /var/lib/dpkg/info/%@.prerm"
                         " /var/lib/dpkg/info/%@.postrm"
                         " /var/lib/dpkg/info/%@.preinst"
@@ -9226,7 +9229,7 @@ int main(int argc, char *argv[]) {
 
     _trace();
 
-    CyteInitialize([NSString stringWithFormat:@"Cydia/%@", Cydia_]);
+    CyteInitialize([NSString stringWithFormat:@"Sileo/%@", Cydia_]);
     UpdateExternalStatus(0);
 
     SessionData_ = [NSMutableDictionary dictionaryWithCapacity:4];
@@ -9322,7 +9325,7 @@ int main(int argc, char *argv[]) {
     App_ = [[NSBundle mainBundle] bundlePath];
     Advanced_ = YES;
 
-    Cache_ = [[NSString stringWithFormat:@"%@/Library/Caches/com.saurik.Cydia", @"/var/mobile"] retain];
+    Cache_ = [[NSString stringWithFormat:@"%@/Library/Caches/com.saurik.Cydia", @"/var/jb/var/mobile"] retain];
     mkdir([Cache_ UTF8String], 0755);
 
     /*Method alloc = class_getClassMethod([NSObject class], @selector(alloc));
@@ -9333,7 +9336,7 @@ int main(int argc, char *argv[]) {
     dealloc_ = dealloc->method_imp;
     dealloc->method_imp = (IMP) &Dealloc_;*/
 
-    void *gestalt(dlopen("/usr/lib/libMobileGestalt.dylib", RTLD_GLOBAL | RTLD_LAZY));
+    void *gestalt(dlopen("/var/jb/usr/lib/libMobileGestalt.dylib", RTLD_GLOBAL | RTLD_LAZY));
     $MGCopyAnswer = reinterpret_cast<CFStringRef (*)(CFStringRef)>(dlsym(gestalt, "MGCopyAnswer"));
     UniqueID_ = UniqueIdentifier([UIDevice currentDevice]);
 
@@ -9354,8 +9357,8 @@ int main(int argc, char *argv[]) {
     SectionMap_ = [[[NSDictionary alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Sections" ofType:@"plist"]] autorelease];
 
     _trace();
-    mkdir("/var/mobile/Library/Cydia", 0755);
-    MetaFile_.Open("/var/mobile/Library/Cydia/metadata.cb0");
+    mkdir("/var/jb/var/mobile/Library/Cydia", 0755);
+    MetaFile_.Open("/var/jb/var/mobile/Library/Cydia/metadata.cb0");
     _trace();
 
     Values_ = AutoreleaseDeepMutableCopyOfDictionary(CFPreferencesCopyAppValue(CFSTR("CydiaValues"), CFSTR("com.saurik.Cydia")));
@@ -9364,7 +9367,7 @@ int main(int argc, char *argv[]) {
     Version_ = [(NSNumber *) CFPreferencesCopyAppValue(CFSTR("CydiaVersion"), CFSTR("com.saurik.Cydia")) autorelease];
 
     _trace();
-    NSDictionary *metadata([[[NSMutableDictionary alloc] initWithContentsOfFile:@"/var/lib/cydia/metadata.plist"] autorelease]);
+    NSDictionary *metadata([[[NSMutableDictionary alloc] initWithContentsOfFile:@"/var/jb/var/lib/cydia/metadata.plist"] autorelease]);
 
     if (Values_ == nil)
         Values_ = [metadata objectForKey:@"Values"];
@@ -9418,16 +9421,16 @@ int main(int argc, char *argv[]) {
     broken = nil;
 
     SaveConfig(nil);
-    system("/usr/libexec/cydia/cydo /bin/rm -f /var/lib/cydia/metadata.plist");
+    system("/var/jb/usr/libexec/cydia/cydo /var/jb/bin/rm -f /var/jb/var/lib/cydia/metadata.plist");
     /* }}} */
 
     Finishes_ = [NSArray arrayWithObjects:@"return", @"reopen", @"restart", @"reload", @"reboot", nil];
 
-    int version([[NSString stringWithContentsOfFile:@"/var/lib/cydia/firmware.ver"] intValue]);
+    int version([[NSString stringWithContentsOfFile:@"/var/jb/var/lib/cydia/firmware.ver"] intValue]);
 
     if (access("/User", F_OK) != 0 || version != 6) {
         _trace();
-        system("/usr/libexec/cydia/cydo /usr/libexec/cydia/firmware.sh");
+        system("/var/jb/usr/libexec/cydia/cydo /var/jb/usr/libexec/cydia/firmware.sh");
         _trace();
     }
 
@@ -9438,7 +9441,7 @@ int main(int argc, char *argv[]) {
             _assert(errno == ENOENT);
     }
 
-    system([[NSString stringWithFormat:@"/usr/libexec/cydia/cydo /bin/ln -sf %@ /etc/apt/sources.list.d/cydia.list", Cache("sources.list")] UTF8String]);
+    system([[NSString stringWithFormat:@"/var/jb/usr/libexec/cydia/cydo /var/jb/bin/ln -sf %@ /var/jb/etc/apt/sources.list.d/cydia.list", Cache("sources.list")] UTF8String]);
 
     /* APT Initialization {{{ */
     _assert(pkgInitConfig(*_config));
@@ -9450,7 +9453,7 @@ int main(int argc, char *argv[]) {
     _config->Set("Acquire::AllowInsecureRepositories", true);
     _config->Set("Acquire::Check-Valid-Until", false);
 
-    _config->Set("Dir::Bin::Methods", "/Applications/Cydia.app");
+    _config->Set("Dir::Bin::Methods", "/var/jb/Applications/Cydia.app");
 
     _config->Set("pkgCacheGen::ForceEssential", "");
 
@@ -9479,11 +9482,11 @@ int main(int argc, char *argv[]) {
     mkdir([Cache("periodic") UTF8String], 0755);
     _config->Set("Dir::State::Lists", [Cache("lists") UTF8String]);
 
-    std::string logs("/var/mobile/Library/Logs/Cydia");
+    std::string logs("/var/jb/var/mobile/Library/Logs/Cydia");
     mkdir(logs.c_str(), 0755);
     _config->Set("Dir::Log", logs);
 
-    _config->Set("Dir::Bin::dpkg", "/usr/libexec/cydia/cydo");
+    _config->Set("Dir::Bin::dpkg", "/var/jb/usr/libexec/cydia/cydo");
 
     _config->Set("Dpkg::Options::", "--force-confdef");
     _config->Set("Dpkg::Options::", "--force-confnew");

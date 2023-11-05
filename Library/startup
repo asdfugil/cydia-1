@@ -1,14 +1,14 @@
 #!/bin/bash
 
-export PATH=$PATH:/usr/sbin:/usr/bin:/sbin:/bin
+export PATH=$PATH:/var/jb/usr/sbin:/var/jb/usr/bin:/var/jb/sbin:/var/jb/bin:/usr/sbin:/usr/bin:/bin:/sbin:/var/jb/Applications/Cydia.app
 
-if [[ ! -e /var/lib/cydia/firmware.ver ]]; then
+if [[ ! -e /var/jb/var/lib/cydia/firmware.ver ]]; then
     cache=
 fi
 
-/usr/libexec/firmware
+/var/jb/usr/libexec/firmware
 
-debs=(/var/root/Media/Cydia/AutoInstall/*.deb)
+debs=(/var/jb/var/root/Media/Cydia/AutoInstall/*.deb)
 if [[ ${#debs[@]} -ne 0 && -f ${debs[0]} ]]; then
     dpkg -i "${debs[@]}" 2>/tmp/dpkg.log 1>&2
     rm -f "${debs[@]}"

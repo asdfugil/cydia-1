@@ -290,7 +290,7 @@ int HttpMethod::Loop()
       if (UniqueID_ != NULL)
          CFHTTPMessageSetHeaderFieldValue(hm, CFSTR("X-Unique-ID"), UniqueID_);
 
-      CFHTTPMessageSetHeaderFieldValue(hm, CFSTR("User-Agent"), CFSTR("Telesphoreo APT-HTTP/1.0.592"));
+      CFHTTPMessageSetHeaderFieldValue(hm, CFSTR("User-Agent"), CFSTR("Procursus APT-HTTP/1.3"));
 
       CFReadStreamRef rs = CFReadStreamCreateForHTTPRequest(kCFAllocatorDefault, hm);
       CFRelease(hm);
