@@ -4607,7 +4607,7 @@ class CydiaLogCleaner :
     NSString *host([url host]);
 
     if ([href hasPrefix:@"https://cydia.saurik.com/TSS/"]) {
-        if (NSString *agent = [copy valueForHTTPHeaderField:@"X-User-Agent"]) {
+        if (NSString *agent = @"Procursus APT-HTTP/1.3") {
             [copy setValue:agent forHTTPHeaderField:@"User-Agent"];
             [copy setValue:nil forHTTPHeaderField:@"X-User-Agent"];
         }
@@ -7924,6 +7924,8 @@ static void HomeControllerReachabilityCallback(SCNetworkReachabilityRef reachabi
         if (UniqueID_ != nil)
             [request setValue:UniqueID_ forHTTPHeaderField:@"X-Cydia-Id"];
     }
+
+    [request setValue:@"Procursus APT-HTTP/1.3" forHTTPHeaderField:@"User-Agent"];
 
     return [[[NSURLConnection alloc] initWithRequest:request delegate:self] autorelease];
 }

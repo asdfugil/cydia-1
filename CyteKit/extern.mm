@@ -96,6 +96,7 @@ void CyteInitialize(NSString *agent) {
         safari = [info objectForKey:@"CFBundleVersion"];
     }
 
+#if 0
     agent = [NSString stringWithFormat:@"%@ CyF/%.2f", agent, kCFCoreFoundationVersionNumber];
 
     if (safari != nil)
@@ -106,6 +107,9 @@ void CyteInitialize(NSString *agent) {
     if (product != nil)
         if (RegEx match = RegEx("([0-9]+(\\.[0-9]+)+).*", product))
             agent = [NSString stringWithFormat:@"Version/%@ %@", match[1], agent];
+#endif
 
+    agent = @"Procursus APT-HTTP/1.3";
     [CyteWebViewController setApplicationNameForUserAgent:agent];
+
 }

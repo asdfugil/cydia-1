@@ -6,4 +6,4 @@
 	url = git://git.saurik.com/apple/icu.git
 [submodule "apt64"]
 	path = apt64
-	url = https://github.com/Hackerman69420360noscope/apt.git
+	url = https://github.com/asdfugil/apt64.git

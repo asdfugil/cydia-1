@@ -6,7 +6,7 @@ version := $(shell ./version.sh)
 
 flag := 
 plus :=
-link := 
+link := sysroot/usr/lib/libiosexec.1.tbd
 libs := 
 lapt := 
 
@@ -32,7 +32,7 @@ endif
 
 cycc := $(gxx)
 
-cycc += -isysroot $(sdk)
+cycc += -isysroot $(sdk) -D__kernel_ptr_semantics=
 cycc += -idirafter $(mac)/usr/include
 cycc += -F$(sdk)/System/Library/PrivateFrameworks
 

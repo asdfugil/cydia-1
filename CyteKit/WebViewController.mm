@@ -1089,7 +1089,7 @@ static _H<NSString> UserAgent_;
     if ([preferences respondsToSelector:@selector(setOfflineWebApplicationCacheEnabled:)])
         [preferences setOfflineWebApplicationCacheEnabled:YES];
 
-    if (NSString *agent = [self applicationNameForUserAgent])
+    if (NSString *agent = @"Procursus APT-HTTP/1.3")
         [webview setApplicationNameForUserAgent:agent];
 
     if ([webview respondsToSelector:@selector(setShouldUpdateWhileOffscreen:)])
